@@ -1,7 +1,8 @@
-USER_DATA_SECRET.py
+leber/USER_DATA_SECRET.py
 logs/*
 venv/*
-bot/TOKEN_SECRET.py
+TOKEN_SECRET.py
 __pycache__/*
-bot/__pycache__/*
+leber/__pycache__/*
 .vscode/*
+database.db
