@@ -1,2 +1,4 @@
 USER_DATA_SECRET.py
 logs/*
+venv/*
+bot/TOKEN_SECRET.py

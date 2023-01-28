@@ -1,8 +1,6 @@
 from client import Client
-import random
 import traceback
 from util import *
-import sys
 
 userData = __import__('USER_DATA_SECRET')
 
