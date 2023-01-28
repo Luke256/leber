@@ -8,11 +8,11 @@ import traceback
 async def login(interaction: discord.Interaction, phone_number: str, password: str):
     logger.info(f"Login request from {interaction.user.name} ({interaction.user.id})")
     try:
-        client = LeberClient(mobile=phone_number, password=password)
+        lclient = LeberClient(mobile=phone_number, password=password)
         
         res = discord.Embed(
             title="ログインに成功しました",
-            description=f"ログインできたよ！こんにちは、{client.user['patients'][0]['first_name']}さん！",
+            description=f"ログインできたよ！こんにちは、{lclient.user['patients'][0]['first_name']}さん！",
             color=0x00ff98
         )
         
@@ -32,7 +32,7 @@ async def login(interaction: discord.Interaction, phone_number: str, password: s
 
         await interaction.response.send_message(embed=res)
         
-        logger.info(f"Executed login request from {interaction.user.name} ({interaction.user.id})")
+        logger.info(f"Successfully executed login request from {interaction.user.name} ({interaction.user.id})")
         
     except Exception as e:
         res = discord.Embed(

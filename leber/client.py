@@ -8,10 +8,14 @@ import random
 class LeberClient:
     host = "https://api.leber11.com:443"
 
-    def __init__(self, mobile: str, password: str):
-        session_id = random.randint(0, 10000)
-
+    def __init__(self, mobile: str = "", password: str = "", info: Dict = {}):
         self.logger = Logger()
+        
+        if len(info):
+            self.user = info
+            return
+        
+        session_id = random.randint(0, 10000)
 
         if not mobile.startswith('+'):
             mobile = to_global_mobile(mobile)
@@ -30,10 +34,12 @@ class LeberClient:
         if res.status_code != 200:
             self.logger.error(f"({session_id}) Failed to login (code: {res.status_code})")
 
-        if json.loads(res.text)['status'] != 1:
-            self.logger.error(f"({session_id}) Failed to log in (message: {res['status']})")
+        resj = json.loads(res.text)
 
-        self.user = json.loads(res.text)['result']['user']
+        if resj['status'] != 1:
+            self.logger.error(f"({session_id}) Failed to log in (message: {resj['status']})")
+
+        self.user = resj['result']['user']
 
         self.log_response(res, session_id)
 
@@ -104,7 +110,7 @@ class LeberClient:
         if res['status'] != 1:
             self.logger.error(f"({session_id}) Failed to submit health data (status: {res['status']}, message: {res['message']})")
 
-    def log_response(self, res: object, session_id: int):
+    def log_response(self, res: requests.Response, session_id: int):
         self.logger.info(f"({session_id}) Request to       : {res.request.url}")
         self.logger.info(f"({session_id}) Request from     : {self.user['patients'][0]['mobile_number']}")
         self.logger.info(f"({session_id}) Request Header   : {res.request.headers}")
