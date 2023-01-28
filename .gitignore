@@ -3,4 +3,5 @@ logs/*
 venv/*
 bot/TOKEN_SECRET.py
 __pycache__/*
+bot/__pycache__/*
 .vscode/*
