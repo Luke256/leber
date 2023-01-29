@@ -18,8 +18,9 @@ def sendGoodHealth(id: int):
     info = cur.fetchall()[0][1]
         
     con.close()
-     
-    lclient = LeberClient(info=json.loads(info))
+
+    info = json.loads(info)
+    lclient = LeberClient(info=info)
     
     lclient.submitTemperture([temperture, time, state])
 
