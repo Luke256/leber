@@ -1,6 +1,7 @@
 import discord
 import random
 import sqlite3
+import json
 from static import *
 from leber.client import LeberClient
 from leber.logger import Logger
@@ -17,8 +18,8 @@ def sendGoodHealth(id: int):
     info = cur.fetchall()[0][1]
         
     con.close()
-        
-    lclient = LeberClient(info=info)
+     
+    lclient = LeberClient(info=json.loads(info))
     
     lclient.submitTemperture([temperture, time, state])
 
