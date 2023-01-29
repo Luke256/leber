@@ -1,11 +1,13 @@
-from common import *
-from leber.utility import get_answers
-from leber.client import LeberClient
-from discord.app_commands import Choice
-import sqlite3
 import json
+import sqlite3
 import traceback
-import typing
+
+from discord.app_commands import Choice
+
+from common import *
+from leber.client import LeberClient
+from leber.utility import get_answers
+
 
 @tree.command(name="submit", description="ヘルスデータを送信します")
 @app_commands.choices(
@@ -33,15 +35,15 @@ async def submit(interaction: discord.Interaction,
         
         answers = get_answers(questions=questions, answers=[temperture.value, time.value, "良い"], logger=logger)
         
-        # lclient.submitTemperture(answer=answers)
+        lclient.submitTemperture(answer=answers)
 
         res = discord.Embed(
-            title="ヘルスデータ提出官僚",
-            description=f"ヘルスデータを提出したよ！(してない)\n{info['patients'][0]['first_name']}さん、今日も一日頑張ろう！",
+            title="ヘルスデータ提出完了",
+            description=f"ヘルスデータを提出したよ！\n{info['patients'][0]['first_name']}さん、今日も一日頑張ろう！",
             color=0x44bdff
         )
-        res.add_field(name="体温", value=f"{temperture.name}", inline=False)
-        res.add_field(name="時間", value=f"{time.name}", inline=False)
+        res.add_field(name="体温", value=f"{temperture.name}")
+        res.add_field(name="時間", value=f"{time.name}")
 
         await interaction.response.send_message(embed=res)
         logger.info(f"Successfully executed submit request from {interaction.user.name} ({interaction.user.id})")
@@ -57,8 +59,4 @@ async def submit(interaction: discord.Interaction,
         
         await interaction.response.send_message(embed=res)
         
-        t = list(traceback.TracebackException.from_exception(e).format())
-        t = "".join(t)
-        t = t.split("\n")
-        for i in t:
-            logger.error(i[:-1])
+        log_exception(e)

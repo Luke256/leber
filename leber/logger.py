@@ -8,12 +8,13 @@ class Logger:
         
         to_terminal = logging.StreamHandler()
         to_file = logging.FileHandler(filename=self.filename)
+        to_terminal.setFormatter(get_formatter())
+        to_file.setFormatter(get_formatter())
         logging.basicConfig(
             level=logging.DEBUG,
-            format="[%(levelname)s] %(asctime)s | %(message)s",
-            datefmt="%m/%d/%Y %H:%M:%S",
             handlers=[to_terminal, to_file]
         )
+        
 
     def debug(self, message):
         logging.debug(message)

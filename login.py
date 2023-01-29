@@ -6,7 +6,7 @@ import traceback
 
 @tree.command(name="login", description="LEBERにログインします")
 async def login(interaction: discord.Interaction, phone_number: str, password: str):
-    logger.info(f"Login request from {interaction.user.name} ({interaction.user.id})")
+    client.logger.info(f"Login request from {interaction.user.name} ({interaction.user.id})")
     try:
         lclient = LeberClient(mobile=phone_number, password=password)
         
@@ -24,26 +24,23 @@ async def login(interaction: discord.Interaction, phone_number: str, password: s
         if len(cur.fetchall()) > 0:
             res.title = "すでにログイン済みです"
             res.description = "もうログイン済みだよ！"
+            client.logger.info(f"the User is already logged in: {interaction.user.name} ({interaction.user.id})")
         else:
-            conn.execute("INSERT INTO users VALUES (?, ?)", (str(interaction.user.id), json.dumps(client.user)))
+            conn.execute("INSERT INTO users VALUES (?, ?)", (str(interaction.user.id), json.dumps(lclient.user)))
             conn.commit()
             
         conn.close()
 
-        await interaction.response.send_message(embed=res)
+        await interaction.response.send_message(embed=res, ephemeral=True)
         
-        logger.info(f"Successfully executed login request from {interaction.user.name} ({interaction.user.id})")
+        client.logger.info(f"Successfully executed login request from {interaction.user.name} ({interaction.user.id})")
         
     except Exception as e:
         res = discord.Embed(
             title="ログインに失敗しました",
-            description="IDまたはパスワードが正しくないのかも!",
+            description="IDまたはパスワードが正しくないのかも！",
             color=0xff0000
         )
-        await interaction.response.send_message(embed=res)
+        await interaction.response.send_message(embed=res, ephemeral=True)
         
-        t = list(traceback.TracebackException.from_exception(e).format())
-        t = "".join(t)
-        t = t.split("\n")
-        for i in t:
-            logger.error(i[:-1])
+        log_exception(e)

@@ -1,27 +1,34 @@
 secret = __import__("TOKEN_SECRET")
 
+import datetime
+import logging
+import sys
+import traceback
+
 import discord
 from discord import app_commands
-import logging, sys, datetime
-from leber.utility import *
+
+from client import Leberse
 from leber.logger import Logger
+from leber.utility import *
+from static import *
 
-dbname = 'database.db'
+intents = discord.Intents.all()
 
-intents = discord.Intents.default()
-
-client = discord.Client(intents=intents)
+client = Leberse(intents=intents)
 
 tree = app_commands.CommandTree(client)
 
 handler = logging.FileHandler(filename=get_logfile_name(), encoding='utf-8', mode='a')
+handler.setFormatter(get_formatter())
 
-logger = Logger()
+client.logger = Logger()
 
-tempertures = [
-    "36.0°C", "36.1°C", "36.2°C", "36.3°C", "36.4°C", "36.5°C", "36.6°C", "36.7°C", "36.8°C"
-]
-
-times = [
-    "00:00", "01:00", "02:00", "03:00", "04:00", "05:00", "06:00", "07:00", "08:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00", "21:00", "22:00", "23:00",
-]
+def log_exception(e: Exception):
+    t = list(traceback.TracebackException.from_exception(e).format())
+    t = "".join(t)
+    t = t.split("\n")
+    for i in t:
+        if len(i) > 0 and i[-1] == '\n':
+            i = i[:-1]
+        client.logger.error(i)
