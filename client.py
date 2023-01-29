@@ -12,7 +12,7 @@ from goodButton import GoodButton
 from leber.logger import Logger
 from static import *
 
-Querytime = datetime.time(hour=16, minute=40, tzinfo=datetime.timezone(datetime.timedelta(hours=9)))
+Querytime = datetime.time(hour=7, minute=0, tzinfo=datetime.timezone(datetime.timedelta(hours=9)))
 
 class Leberse(discord.Client):
 
