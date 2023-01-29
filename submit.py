@@ -19,8 +19,8 @@ async def submit(interaction: discord.Interaction,
                  time: Choice[str] = None):
     if time == None:
         time = Choice(name="06:00", value="06:00")
-    logger.info(f"Submit request from {interaction.user.name} ({interaction.user.id})")
-    logger.info(f"temperture: {temperture.value}, time: {time.value}")
+    client.logger.info(f"Submit request from {interaction.user.name} ({interaction.user.id})")
+    client.logger.info(f"temperture: {temperture.value}, time: {time.value}")
     try:
         
         con = sqlite3.connect(database=dbname)
@@ -33,7 +33,7 @@ async def submit(interaction: discord.Interaction,
         
         questions = lclient.getTemprtureQuestion()['result']
         
-        answers = get_answers(questions=questions, answers=[temperture.value, time.value, "良い"], logger=logger)
+        answers = get_answers(questions=questions, answers=[temperture.value, time.value, "良い"], logger=client.logger)
         
         lclient.submitTemperture(answer=answers)
 
@@ -46,7 +46,7 @@ async def submit(interaction: discord.Interaction,
         res.add_field(name="時間", value=f"{time.name}")
 
         await interaction.response.send_message(embed=res)
-        logger.info(f"Successfully executed submit request from {interaction.user.name} ({interaction.user.id})")
+        client.logger.info(f"Successfully executed submit request from {interaction.user} ({interaction.user.id})")
         
     except Exception as e:
         res = discord.Embed(
@@ -59,4 +59,4 @@ async def submit(interaction: discord.Interaction,
         
         await interaction.response.send_message(embed=res)
         
-        log_exception(e)
+        client.log_exception(e)

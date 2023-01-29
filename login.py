@@ -6,7 +6,7 @@ import traceback
 
 @tree.command(name="login", description="LEBERにログインします")
 async def login(interaction: discord.Interaction, phone_number: str, password: str):
-    client.logger.info(f"Login request from {interaction.user.name} ({interaction.user.id})")
+    client.logger.info(f"Login request from {interaction.user} ({interaction.user.id})")
     try:
         lclient = LeberClient(mobile=phone_number, password=password)
         
@@ -24,16 +24,16 @@ async def login(interaction: discord.Interaction, phone_number: str, password: s
         if len(cur.fetchall()) > 0:
             res.title = "すでにログイン済みです"
             res.description = "もうログイン済みだよ！"
-            client.logger.info(f"the User is already logged in: {interaction.user.name} ({interaction.user.id})")
+            client.logger.info(f"the User is already logged in: {interaction.user} ({interaction.user.id})")
         else:
             conn.execute("INSERT INTO users VALUES (?, ?)", (str(interaction.user.id), json.dumps(lclient.user)))
             conn.commit()
             
         conn.close()
 
-        await interaction.response.send_message(embed=res, ephemeral=True)
+        await interaction.response.send_message(embed=res, ephemeral=interaction.channel.type != discord.enums.ChannelType.private)
         
-        client.logger.info(f"Successfully executed login request from {interaction.user.name} ({interaction.user.id})")
+        client.logger.info(f"Successfully executed login request from {interaction.user} ({interaction.user.id})")
         
     except Exception as e:
         res = discord.Embed(
@@ -41,6 +41,6 @@ async def login(interaction: discord.Interaction, phone_number: str, password: s
             description="IDまたはパスワードが正しくないのかも！",
             color=0xff0000
         )
-        await interaction.response.send_message(embed=res, ephemeral=True)
+        await interaction.response.send_message(embed=res, ephemeral=interaction.channel.type != discord.enums.ChannelType.private)
         
-        log_exception(e)
+        client.log_exception(e)

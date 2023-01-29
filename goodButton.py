@@ -12,7 +12,7 @@ class GoodButton(discord.ui.Button):
     async def callback(self, interaction: discord.Interaction):
         logger = Logger()
         
-        logger.info(f"Good health request from {interaction.user.name} ({interaction.user.id})")
+        logger.info(f"Good health request from {interaction.user} ({interaction.user.id})")
         
         temperture = random.randint(21, 28)
         time = 118
@@ -25,7 +25,7 @@ class GoodButton(discord.ui.Button):
                     description="まずはログインをしてください！(/login)"
                 )
                 await interaction.response.send_message(embed=embed, ephemeral=True)
-                logger.info(f"User isn't logged in: {interaction.user.name} ({interaction.user.id})")
+                logger.info(f"User isn't logged in: {interaction.user} ({interaction.user.id})")
                 return
 
             con = sqlite3.connect(dbname)
@@ -38,14 +38,14 @@ class GoodButton(discord.ui.Button):
             
             lclient = LeberClient(info=info)
 
-            # lclient.submitTemperture([temperture, time, state])
+            lclient.submitTemperture([temperture, time, state])
 
             embed = discord.Embed(
                 title="体調チェック完了(送信してないよ)",
                 description="了解！今日も一日がんばろー！"
             )
-            await interaction.response.send_message(embed=embed, ephemeral=True)
-            logger.info(f"Successfully executed good-health request from {interaction.user.name} ({interaction.user.id})")
+            await interaction.response.send_message(embed=embed, ephemeral=interaction.channel.type != discord.enums.ChannelType.private)
+            logger.info(f"Successfully executed good-health request from {interaction.user} ({interaction.user.id})")
         
         except Exception as e:
             

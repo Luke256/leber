@@ -4,7 +4,7 @@ import traceback
 
 @tree.command(name="logout", description="LEBERアカウントからログアウトします")
 async def logout(interaction: discord.Interaction):
-    client.logger.info(f"Logout Request from {interaction.user.name} ({interaction.user.id})")
+    client.logger.info(f"Logout Request from {interaction.user} ({interaction.user.id})")
     try:
         con = sqlite3.connect(dbname)
         cur = con.cursor()
@@ -18,7 +18,7 @@ async def logout(interaction: discord.Interaction):
                 color=0xFFB444
             )
             await interaction.response.send_message(embed=res)
-            client.logger.info(f"There isn't user data of {interaction.user.name} ({interaction.user.id}) (Logout Failed).")
+            client.logger.info(f"There isn't user data of {interaction.user} ({interaction.user.id}) (Logout Failed).")
             return
 
         cur.execute('DELETE FROM users WHERE id = ?', (str(interaction.user.id), ))
@@ -33,7 +33,7 @@ async def logout(interaction: discord.Interaction):
             )
         await interaction.response.send_message(embed=res)
         
-        client.logger.info(f"Successfully executed logout request from {interaction.user.name} ({interaction.user.id}).")
+        client.logger.info(f"Successfully executed logout request from {interaction.user} ({interaction.user.id}).")
         
     except Exception as e:
         res = discord.Embed(
@@ -43,4 +43,4 @@ async def logout(interaction: discord.Interaction):
         )
         await interaction.response.send_message(embed=res)
         
-        log_exception(e)
+        client.log_exception(e)
