@@ -20,7 +20,7 @@ def sendGoodHealth(id: int):
     con.close()
 
     info = json.loads(info)
-    lclient = LeberClient(info=info)
+    lclient = getLeberClient(id=str(id), info=info)
     
     lclient.submitTemperture([temperture, time, state])
 

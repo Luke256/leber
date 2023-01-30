@@ -7,43 +7,48 @@ import random
 
 class LeberClient:
     host = "https://api.leber11.com:443"
+    need_update = False
 
     def __init__(self, mobile: str = "", password: str = "", info: Dict = {}):
         self.logger = Logger()
         
         if len(info):
             self.user = info
-            return
         
-        session_id = random.randint(0, 10000)
+        else:
+            session_id = random.randint(0, 10000)
 
-        if not mobile.startswith('+'):
-            mobile = to_global_mobile(mobile)
+            if not mobile.startswith('+'):
+                mobile = to_global_mobile(mobile)
 
-        headers = {
-            "Content-Type": "application/json"
-        }
+            headers = {
+                "Content-Type": "application/json"
+            }
 
-        payload = {
-            "login": mobile, 
-            "password": password
-        }
+            payload = {
+                "login": mobile, 
+                "password": password
+            }
 
-        res = requests.post(self.host + "/v9//users/sign_in", headers=headers, data=json.dumps(payload))
+            res = requests.post(self.host + "/v9//users/sign_in", headers=headers, data=json.dumps(payload))
 
-        if res.status_code != 200:
-            self.logger.error(f"({session_id}) Failed to login (code: {res.status_code})")
+            if res.status_code != 200:
+                self.logger.error(f"({session_id}) Failed to login (code: {res.status_code})")
 
-        resj = json.loads(res.text)
+            resj = json.loads(res.text)
 
-        if resj['status'] != 1:
-            self.logger.error(f"({session_id}) Failed to log in (message: {resj['status']})")
+            if resj['status'] != 1:
+                self.logger.error(f"({session_id}) Failed to log in (message: {resj['status']})")
 
-        self.user = resj['result']['user']
+            self.user = resj['result']['user']
 
-        self.log_response(res, session_id)
+            self.log_response(res, session_id)
 
-        self.session_id = -1
+            self.session_id = -1
+        
+        if not "auto_submit" in self.user:
+            self.need_update = True
+            self.user["auto_submit"] = False
 
     def getTemprtureQuestion(self, session_id = -1) -> Dict:
         if session_id == -1:

@@ -4,7 +4,6 @@ import sqlite3
 from discord.app_commands import Choice
 
 from common import *
-from leber.client import LeberClient
 from leber.utility import get_answers
 
 
@@ -27,8 +26,9 @@ async def submit(interaction: discord.Interaction,
         cur.execute('SELECT * FROM users WHERE id = ?', (str(interaction.user.id), ))
         info = cur.fetchall()[0][1]
         info = json.loads(info)
+        con.close()
         
-        lclient = LeberClient(info=info)
+        lclient = getLeberClient(id=str(interaction.user.id), info=info)
         
         questions = lclient.getTemprtureQuestion()['result']
         

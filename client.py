@@ -8,9 +8,10 @@ import discord
 from discord.ext import tasks
 
 from badButton import BadButton
-from goodButton import GoodButton
+from goodButton import GoodButton, sendGoodHealth
 from leber.logger import Logger
 from static import *
+from leber.utility import get_time
 
 Querytime = datetime.time(hour=7, minute=0, tzinfo=datetime.timezone(datetime.timedelta(hours=9)))
 
@@ -24,8 +25,9 @@ class Leberse(discord.Client):
     async def auto_healthcheck(self):
         guild = self.get_guild(624134396018163712)
         channel = guild.get_channel(1068824419943845919)
+        now = get_time()
         embed = discord.Embed(
-            title="定期送信",
+            title=f"定期送信({now.tm_year}年{now.tm_mon}月{now.tm_mday}日)",
             description="おはよう！今日の体調は？",
             color=0x00ff98
         )
@@ -38,11 +40,14 @@ class Leberse(discord.Client):
         
         users = self.getUserList()
         
-        for id in users:
+        for id, data in users:
             user = self.get_user(id)
             
             try:
-                await user.send(embed=embed, view=view)
+                if (data.user['auto_submit']):
+                    sendGoodHealth(id)
+                else:
+                    await user.send(embed=embed, view=view)
             except discord.errors.Forbidden:
                 self.logger.warning(f"Failed to send health check to {user} ({user.id}). Maybe blocked.")
             except Exception as e:
@@ -50,17 +55,17 @@ class Leberse(discord.Client):
         
         self.logger.info("Sent health check information")
         
-    def getUserList(self) -> typing.List[int]:
+    def getUserList(self):
         try:
             con = sqlite3.connect(dbname)
             cur = con.cursor()
 
-            cur.execute('SELECT id FROM users')
-            ids = [int(id[0]) for id in cur.fetchall()]
+            cur.execute('SELECT * FROM users')
+            users = [(int(user[0]), getLeberClient(user[0], info=json.loads(user[1]))) for user in cur.fetchall()]
             
             con.close()
             
-            return ids
+            return users
         
         except Exception as e:
             self.log_exception(e)

@@ -1,4 +1,7 @@
 import sqlite3
+import typing
+from leber.client import LeberClient
+import json
 
 dbname = 'database.db'
 
@@ -24,3 +27,17 @@ def checkLoginState(id: str) -> bool:
         return False
     else:
         return True
+
+def getLeberClient(id: str, mobile: str = "", password: str = "", info: typing.Dict = {}):
+    client = LeberClient(mobile=mobile, password=password, info=info)
+    
+    if client.need_update:
+        con = sqlite3.connect(dbname)
+        cur = con.cursor()
+
+        cur.execute("UPDATE users SET data = ? WHERE id = ?", (json.dumps(client.user), id))
+
+        con.commit()
+        con.close()
+        
+    return client

@@ -3,6 +3,7 @@ import login
 import logout
 import neko
 import submit
+import setting
 from common import *
 
 
