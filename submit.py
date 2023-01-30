@@ -20,6 +20,15 @@ async def submit(interaction: discord.Interaction,
     client.logger.info(f"Submit request from {interaction.user.name} ({interaction.user.id})")
     client.logger.info(f"temperture: {temperture.value}, time: {time.value}")
     try:
+        if not checkLoginState(str(interaction.user.id)):
+            res = discord.Embed(
+                title="ログインしていません",
+                description="あなたのユーザー情報がありません\nヘルスデータを提出するためにはまずログインしてね！",
+                color=0xFFB444
+            )
+            await interaction.response.send_message(embed=res)
+            client.logger.info(f"There isn't user data of {interaction.user} ({interaction.user.id}) (Submit Failed).")
+            return
         
         con = sqlite3.connect(database=dbname)
         cur = con.cursor()
