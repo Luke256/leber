@@ -26,11 +26,18 @@ class Leberse(discord.Client):
         guild = self.get_guild(624134396018163712)
         channel = guild.get_channel(1068824419943845919)
         now = get_time()
-        embed = discord.Embed(
+        embed_manual = discord.Embed(
             title=f"定期送信({now.tm_year}年{now.tm_mon}月{now.tm_mday}日)",
             description="おはよう！今日の体調は？",
             color=0x00ff98
         )
+        
+        embed_auto = discord.Embed(
+            title=f"定期送信({now.tm_year}年{now.tm_mon}月{now.tm_mday}日)",
+            description="おはよう！ヘルスデータを提出しておいたよ！",
+            color=0x44bdff
+        )
+        
         view = discord.ui.View()
         goodString = ["良好！", "絶好調！", "健康だよ！", "異常なし！"]
         badString = ["よくない...", "具合が悪い...", "すぐれない..."]
@@ -46,8 +53,9 @@ class Leberse(discord.Client):
             try:
                 if (data.user['auto_submit']):
                     sendGoodHealth(id)
+                    await user.send(embed=embed_auto)
                 else:
-                    await user.send(embed=embed, view=view)
+                    await user.send(embed=embed_manual, view=view)
             except discord.errors.Forbidden:
                 self.logger.warning(f"Failed to send health check to {user} ({user.id}). Maybe blocked.")
             except Exception as e:
