@@ -2,7 +2,7 @@ import check
 import login
 import logout
 import neko
-import leber.submit as submit
+import submit
 from common import *
 
 

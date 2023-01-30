@@ -1,6 +1,5 @@
 import json
 import sqlite3
-import traceback
 
 from discord.app_commands import Choice
 

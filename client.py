@@ -25,8 +25,9 @@ class Leberse(discord.Client):
         guild = self.get_guild(624134396018163712)
         channel = guild.get_channel(1068824419943845919)
         embed = discord.Embed(
-            title="定期実行",
-            description="おはよう！今日の体調は？"
+            title="定期送信",
+            description="おはよう！今日の体調は？",
+            color=0x00ff98
         )
         view = discord.ui.View()
         goodString = ["良好！", "絶好調！", "健康だよ！", "異常なし！"]

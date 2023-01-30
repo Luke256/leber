@@ -7,7 +7,8 @@ class BadButton(discord.ui.Button):
     async def callback(self, interaction: discord.Interaction):
         embed = discord.Embed(
             title="体調チェック完了",
-            description="お大事に..."
+            description="お大事に...",
+            color=0xFFB444
         )
         
         view = discord.ui.View()

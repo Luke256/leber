@@ -37,7 +37,8 @@ class GoodButton(discord.ui.Button):
             if checkLoginState(str(interaction.user.id)) == False:
                 embed = discord.Embed(
                     title="未ログインです",
-                    description="まずはログインをしてください！(/login)"
+                    description="まずはログインをしてください！(/login)",
+                    color=0xFFB444
                 )
                 await interaction.response.send_message(embed=embed, ephemeral=True)
                 logger.info(f"User isn't logged in: {interaction.user} ({interaction.user.id})")
@@ -47,7 +48,8 @@ class GoodButton(discord.ui.Button):
 
             embed = discord.Embed(
                 title="体調チェック完了",
-                description="了解！今日も一日がんばろー！"
+                description="了解！今日も一日がんばろー！",
+                color=0x44bdff
             )
             await interaction.response.send_message(embed=embed, ephemeral=interaction.channel.type != discord.enums.ChannelType.private)
             logger.info(f"Successfully executed good-health request from {interaction.user} ({interaction.user.id})")
