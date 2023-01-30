@@ -16,6 +16,16 @@ async def setting(interaction: discord.Interaction,
                   ):
     client.logger.info(f"Setting request from {interaction.user.name} ({interaction.user.id})")
     try:
+        if not checkLoginState(str(interaction.user.id)):
+            res = discord.Embed(
+                title="ログインしていません",
+                description="あなたのユーザー情報がありません\n設定を変更するためにはまずログインしてね！",
+                color=0xFFB444
+            )
+            await interaction.response.send_message(embed=res)
+            client.logger.info(f"There isn't user data of {interaction.user} ({interaction.user.id}) (Setting Failed).")
+            return
+        
         res = discord.Embed(
             title="設定変更完了",
             description=f"設定の変更を完了しました！",
