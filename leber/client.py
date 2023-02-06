@@ -32,17 +32,19 @@ class LeberClient:
 
             res = requests.post(self.host + "/v9//users/sign_in", headers=headers, data=json.dumps(payload))
 
+            self.log_response(res, session_id)
+
             if res.status_code != 200:
                 self.logger.error(f"({session_id}) Failed to login (code: {res.status_code})")
+                raise Exception
 
             resj = json.loads(res.text)
 
             if resj['status'] != 1:
-                self.logger.error(f"({session_id}) Failed to log in (message: {resj['status']})")
+                self.logger.error(f"({session_id}) Failed to log in (status: {resj['status']})")
+                raise Exception
 
             self.user = resj['result']['user']
-
-            self.log_response(res, session_id)
 
             self.session_id = -1
         
@@ -113,11 +115,10 @@ class LeberClient:
         res = json.loads(res.text)
 
         if res['status'] != 1:
-            self.logger.error(f"({session_id}) Failed to submit health data (status: {res['status']}, message: {res['message']})")
+            self.logger.error(f"({session_id}) Failed to submit health data (status: {res['status']})")
 
     def log_response(self, res: requests.Response, session_id: int):
         self.logger.info(f"({session_id}) Request to       : {res.request.url}")
-        self.logger.info(f"({session_id}) Request from     : {self.user['patients'][0]['mobile_number']}")
         self.logger.info(f"({session_id}) Request Header   : {res.request.headers}")
         self.logger.info(f"({session_id}) Request Data     : {res.request.body}")
         self.logger.info(f"({session_id}) Response Status  : {res.status_code}")

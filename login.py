@@ -6,6 +6,7 @@ import traceback
 
 @tree.command(name="login", description="LEBERにログインします")
 async def login(interaction: discord.Interaction, phone_number: str, password: str):
+    await interaction.response.defer()
     client.logger.info(f"Login request from {interaction.user} ({interaction.user.id})")
     try:
         lclient = LeberClient(mobile=phone_number, password=password)
@@ -31,7 +32,7 @@ async def login(interaction: discord.Interaction, phone_number: str, password: s
             
         conn.close()
 
-        await interaction.response.send_message(embed=res, ephemeral=interaction.channel.type != discord.enums.ChannelType.private)
+        await interaction.followup.send(embed=res, ephemeral=interaction.channel.type != discord.enums.ChannelType.private)
         
         client.logger.info(f"Successfully executed login request from {interaction.user} ({interaction.user.id})")
         
@@ -41,6 +42,6 @@ async def login(interaction: discord.Interaction, phone_number: str, password: s
             description="IDまたはパスワードが正しくないのかも！",
             color=0xff0000
         )
-        await interaction.response.send_message(embed=res, ephemeral=interaction.channel.type != discord.enums.ChannelType.private)
+        await interaction.followup.send(embed=res, ephemeral=interaction.channel.type != discord.enums.ChannelType.private)
         
         client.log_exception(e)

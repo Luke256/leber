@@ -15,6 +15,7 @@ from leber.utility import get_answers
 async def submit(interaction: discord.Interaction, 
                  temperture: Choice[str], 
                  time: Choice[str] = None):
+    await interaction.response.defer()
     if time == None:
         time = Choice(name="06:00", value="06:00")
     client.logger.info(f"Submit request from {interaction.user.name} ({interaction.user.id})")
@@ -26,7 +27,7 @@ async def submit(interaction: discord.Interaction,
                 description="あなたのユーザー情報がありません\nヘルスデータを提出するためにはまずログインしてね！",
                 color=0xFFB444
             )
-            await interaction.response.send_message(embed=res)
+            await interaction.followup.send(embed=res)
             client.logger.info(f"There isn't user data of {interaction.user} ({interaction.user.id}) (Submit Failed).")
             return
         
@@ -53,7 +54,7 @@ async def submit(interaction: discord.Interaction,
         res.add_field(name="体温", value=f"{temperture.name}")
         res.add_field(name="時間", value=f"{time.name}")
 
-        await interaction.response.send_message(embed=res)
+        await interaction.followup.send(embed=res)
         client.logger.info(f"Successfully executed submit request from {interaction.user} ({interaction.user.id})")
         
     except Exception as e:
@@ -65,6 +66,6 @@ async def submit(interaction: discord.Interaction,
         res.add_field(name="体温", value=f"{temperture.name}", inline=False)
         res.add_field(name="時間", value=f"{time.name}", inline=False)
         
-        await interaction.response.send_message(embed=res)
+        await interaction.followup.send(embed=res)
         
         client.log_exception(e)

@@ -29,6 +29,7 @@ class GoodButton(discord.ui.Button):
         super().__init__(*args, **kwargs)
         
     async def callback(self, interaction: discord.Interaction):
+        await interaction.response.defer()
         logger = Logger()
         
         logger.info(f"Good health request from {interaction.user} ({interaction.user.id})")
@@ -40,7 +41,7 @@ class GoodButton(discord.ui.Button):
                     description="まずはログインをしてください！(/login)",
                     color=0xFFB444
                 )
-                await interaction.response.send_message(embed=embed, ephemeral=True)
+                await interaction.followup.send(embed=embed, ephemeral=True)
                 logger.info(f"User isn't logged in: {interaction.user} ({interaction.user.id})")
                 return
 
@@ -51,17 +52,17 @@ class GoodButton(discord.ui.Button):
                 description="了解！今日も一日がんばろー！",
                 color=0x44bdff
             )
-            await interaction.response.send_message(embed=embed, ephemeral=interaction.channel.type != discord.enums.ChannelType.private)
+            await interaction.followup.send(embed=embed, ephemeral=interaction.channel.type != discord.enums.ChannelType.private)
             logger.info(f"Successfully executed good-health request from {interaction.user} ({interaction.user.id})")
         
         except Exception as e:
             
             res = discord.Embed(
                 title="ヘルスデータ提出エラー",
-                description="ヘルスデータが提出できなかったみたい...",
+                description="ヘルスデータが提出できなかったみたい...\n/submitから手動で送信するか、LEBERから直接送信してみてください！\n(できれば開発者への連絡も...><)",
                 color=0xff0000
             )
         
-            await interaction.response.send_message(embed=res)
+            await interaction.followup.send(embed=res)
 
             logger.error(e)

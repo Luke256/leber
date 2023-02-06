@@ -38,12 +38,17 @@ class Leberse(discord.Client):
             color=0x44bdff
         )
         
+        embed_auto_failed = discord.Embed(
+            title=f"自動送信に失敗しました",
+            description=f"送信に失敗しちゃった...\nとりあえず、今日の体調だけでも教えてくれると嬉しいな\n(可能であれば開発者への連絡をお願いします><)",
+            color=0xff0000
+        )
+        
         view = discord.ui.View()
         goodString = ["良好！", "絶好調！", "健康だよ！", "異常なし！"]
         badString = ["よくない...", "具合が悪い...", "すぐれない..."]
         view.add_item(GoodButton(label=random.choice(goodString), style=discord.ButtonStyle.primary))
         view.add_item(BadButton(label=random.choice(badString), style=discord.ButtonStyle.danger))
-        # await channel.send(embed=embed, view=view)
         
         users = self.getUserList()
         
@@ -51,13 +56,22 @@ class Leberse(discord.Client):
             user = self.get_user(id)
             
             try:
-                if (data.user['auto_submit']):
-                    sendGoodHealth(id)
-                    await user.send(embed=embed_auto)
-                else:
+                Failed = False
+                if data.user['auto_submit']:
+                    try:
+                        sendGoodHealth(id)
+                    except Exception as e:
+                        Failed = True
+                        await user.send(embed=embed_auto_failed, view=view)
+                    if not Failed:
+                        await user.send(embed=embed_auto)
+                        
+                if not data.user['auto_submit'] or Failed:
                     await user.send(embed=embed_manual, view=view)
+                    
             except discord.errors.Forbidden:
                 self.logger.warning(f"Failed to send health check to {user} ({user.id}). Maybe blocked.")
+                
             except Exception as e:
                 self.log_exception(e)
         
