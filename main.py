@@ -4,6 +4,7 @@ import logout
 import neko
 import submit
 import setting
+import help
 from common import *
 
 
