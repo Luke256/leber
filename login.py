@@ -2,7 +2,6 @@ from common import *
 from leber.client import LeberClient
 import sqlite3
 import json
-import traceback
 
 @tree.command(name="login", description="LEBERにログインします")
 async def login(interaction: discord.Interaction, phone_number: str, password: str):
