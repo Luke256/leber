@@ -102,7 +102,7 @@ class LeberClient:
         }
 
         res = requests.post(
-            self.host + "/v9//patients/1236589/submit_temperatures", 
+            self.host + f"/v9//patients/{self.user['patients'][0]['id']}/submit_temperatures", 
             headers=headers, 
             data=json.dumps(payload)
             )
