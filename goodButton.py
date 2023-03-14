@@ -52,7 +52,7 @@ class GoodButton(discord.ui.Button):
                 description="了解！今日も一日がんばろー！",
                 color=0x44bdff
             )
-            await interaction.followup.send(embed=embed, ephemeral=interaction.channel.type != discord.enums.ChannelType.private)
+            await interaction.followup.send(embed=embed, ephemeral=True)
             logger.info(f"Successfully executed good-health request from {interaction.user} ({interaction.user.id})")
         
         except Exception as e:

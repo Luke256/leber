@@ -31,7 +31,7 @@ async def login(interaction: discord.Interaction, phone_number: str, password: s
             
         conn.close()
 
-        await interaction.followup.send(embed=res, ephemeral=interaction.channel.type != discord.enums.ChannelType.private)
+        await interaction.followup.send(embed=res, ephemeral=True)
         
         client.logger.info(f"Successfully executed login request from {interaction.user} ({interaction.user.id})")
         
@@ -41,6 +41,6 @@ async def login(interaction: discord.Interaction, phone_number: str, password: s
             description="IDまたはパスワードが正しくないのかも！",
             color=0xff0000
         )
-        await interaction.followup.send(embed=res, ephemeral=interaction.channel.type != discord.enums.ChannelType.private)
+        await interaction.followup.send(embed=res, ephemeral=True)
         
         client.log_exception(e)
