@@ -17,4 +17,4 @@ class BadButton(discord.ui.Button):
             url="https://web.leber.jp/index.html", 
             style=discord.ButtonStyle.link
         ))
-        await interaction.response.send_message(embed=embed, view=view, ephemeral=True)
+        await interaction.followup.send(embed=embed, view=view)

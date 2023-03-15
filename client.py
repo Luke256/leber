@@ -44,7 +44,7 @@ class Leberse(discord.Client):
             color=0xff0000
         )
         
-        view = discord.ui.View()
+        view = discord.ui.View(timeout=86_400)
         goodString = ["良好！", "絶好調！", "健康だよ！", "異常なし！"]
         badString = ["よくない...", "具合が悪い...", "すぐれない..."]
         view.add_item(GoodButton(label=random.choice(goodString), style=discord.ButtonStyle.primary))
